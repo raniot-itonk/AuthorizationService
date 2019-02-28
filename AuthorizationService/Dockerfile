@@ -1,20 +1,19 @@
 FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
-COPY ["LoginService/LoginService.csproj", "LoginService/"]
-RUN dotnet restore "LoginService/LoginService.csproj"
+COPY ["AuthorizationService/AuthorizationService.csproj", "AuthorizationService/"]
+RUN dotnet restore "AuthorizationService/AuthorizationService.csproj"
 COPY . .
-WORKDIR "/src/LoginService"
-RUN dotnet build "LoginService.csproj" -c Release -o /app
+WORKDIR "/src/AuthorizationService"
+RUN dotnet build "AuthorizationService.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "LoginService.csproj" -c Release -o /app
+RUN dotnet publish "AuthorizationService.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "LoginService.dll"]
+ENTRYPOINT ["dotnet", "AuthorizationService.dll"]
