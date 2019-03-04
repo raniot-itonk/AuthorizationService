@@ -15,9 +15,18 @@ spec:
         image: raniotitonk/authorizationservice
         ports:
         - containerPort: 80
+        - containerPort: 443
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Test"
+        volumeMounts:
+        - name: cert
+          mountPath: "/https"
+          readOnly: true
+      volumes:
+      - name: cert
+        secret:
+          secretName: authorizationservice-cert
 ---
 apiVersion: v1
 kind: Service
@@ -28,6 +37,12 @@ spec:
     app: authorizationservice
   ports:
     - protocol: TCP
-      port: 80
+      name: http
+      port: 7000
       targetPort: 80
+    - protocol: TCP
+      name: https
+      port: 7001
+      targetPort: 443
+
   type: LoadBalancer
