@@ -38,11 +38,11 @@ spec:
   ports:
     - protocol: TCP
       name: http
-      port: 7000
+      port: 80
       targetPort: 80
     - protocol: TCP
       name: https
-      port: 7001
+      port: 443
       targetPort: 443
 
-  type: LoadBalancer
+  type: ClusterIP
