@@ -13,9 +13,11 @@ namespace AuthorizationService
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IHostingEnvironment _env;
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -30,8 +32,7 @@ namespace AuthorizationService
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            SetupDatabase(services, _env);
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
@@ -64,6 +65,8 @@ namespace AuthorizationService
                 app.UseHsts();
             }
 
+            InitializeDatabase(app, env);
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
@@ -76,6 +79,33 @@ namespace AuthorizationService
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private static void InitializeDatabase(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                if (env.IsDevelopment())
+                    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureCreated();
+                else
+                    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+
+            }
+        }
+
+        private void SetupDatabase(IServiceCollection services, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                //services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("InMemoryDbForTesting"));
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("AuthorizationServiceConnection")));
+            }
+            else
+            {
+                services.AddDbContext<ApplicationDbContext>
+                    (options => options.UseSqlServer(Configuration.GetConnectionString("TobinTaxerDatabase")));
+            }
         }
     }
 }
