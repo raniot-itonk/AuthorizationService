@@ -5,6 +5,7 @@ EXPOSE 443
 ENV ASPNETCORE_HTTPS_PORT=443
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password="password"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/authorizationservice.p12
+ENV ASPNETCORE_URLS="https://+;http://+"
 
 
 FROM microsoft/dotnet:2.2-sdk AS build
