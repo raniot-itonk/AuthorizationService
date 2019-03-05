@@ -104,7 +104,7 @@ namespace AuthorizationService
             else
             {
                 services.AddDbContext<ApplicationDbContext>
-                    (options => options.UseSqlServer(Configuration.GetConnectionString("TobinTaxerDatabase")));
+                    (options => options.UseSqlServer(Configuration.GetConnectionString("AuthorizationServiceConnection")));
             }
         }
     }
