@@ -1,5 +1,6 @@
 ﻿using AuthorizationService.Data;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -48,6 +49,8 @@ namespace AuthorizationService
                 .AddInMemoryClients(Config.GetClients())
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddAspNetIdentity<IdentityUser>();
+
+            services.AddHealthChecks().AddDbContextCheck<ApplicationDbContext>(tags: new[] { "ready" });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +68,7 @@ namespace AuthorizationService
                 app.UseHsts();
             }
 
+            SetupReadyAndLiveHealthChecks(app);
             InitializeDatabase(app, env);
 
             app.UseHttpsRedirection();
@@ -78,6 +82,20 @@ namespace AuthorizationService
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+        }
+
+        private static void SetupReadyAndLiveHealthChecks(IApplicationBuilder app)
+        {
+            // The readiness check uses all registered checks with the 'ready' tag.
+            app.UseHealthChecks("/health/ready", new HealthCheckOptions()
+            {
+                Predicate = (check) => check.Tags.Contains("ready"),
+            });
+            app.UseHealthChecks("/health/live", new HealthCheckOptions()
+            {
+                // Exclude all checks and return a 200-Ok.
+                Predicate = (_) => false
             });
         }
 
