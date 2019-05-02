@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Specialized;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace AuthorizationService.Models
 {
@@ -20,5 +22,8 @@ namespace AuthorizationService.Models
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+
+        [Required]
+        public bool IsStockProvider { get; set; }
     }
 }
