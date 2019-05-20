@@ -11,9 +11,9 @@ namespace AuthorizationService.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
-        public AccountController(UserManager<IdentityUser> userManager)
+        public AccountController(UserManager<User> userManager)
         {
             _userManager = userManager;
         }
@@ -24,7 +24,7 @@ namespace AuthorizationService.Controllers
         {
             try
             {
-                var identityUser = new IdentityUser {UserName = user.Email, Email = user.Email};
+                var identityUser = new User {FirstName = user.FirstName, UserName = user.Email, Email = user.Email, IsStockProvider = user.IsStockProvider};
                 return Ok(await _userManager.CreateAsync(identityUser, user.Password));
             }
             catch (Exception e)

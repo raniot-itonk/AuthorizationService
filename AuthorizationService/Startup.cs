@@ -1,4 +1,6 @@
 ﻿using AuthorizationService.Data;
+using AuthorizationService.Models;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -36,7 +38,7 @@ namespace AuthorizationService
 
             SetupDatabase(services, _env);
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -49,13 +51,14 @@ namespace AuthorizationService
                 .AddInMemoryApiResources(Config.GetApiResources())
                 .AddInMemoryClients(Config.GetClients())
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddAspNetIdentity<IdentityUser>();
+                .AddAspNetIdentity<User>();
 
+            services.AddTransient<IProfileService, ProfileService>();
             services.AddHealthChecks().AddDbContextCheck<ApplicationDbContext>(tags: new[] { "ready" });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext context)
         {
             if (env.IsDevelopment())
             {
@@ -69,8 +72,9 @@ namespace AuthorizationService
                 app.UseHsts();
             }
 
+            context.Database.Migrate();
+
             SetupReadyAndLiveHealthChecks(app);
-            InitializeDatabase(app, env);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -102,6 +106,7 @@ namespace AuthorizationService
             });
         }
 
+<<<<<<< HEAD
         private static void InitializeDatabase(IApplicationBuilder app, IHostingEnvironment env)
         {
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
@@ -118,6 +123,8 @@ namespace AuthorizationService
             }
         }
 
+=======
+>>>>>>> 86618c1d5a9bebc36ca73d5a6981dcfc44dcf0f7
         private void SetupDatabase(IServiceCollection services, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
