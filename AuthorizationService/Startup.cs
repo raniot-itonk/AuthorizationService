@@ -107,7 +107,11 @@ namespace AuthorizationService
             using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 if (env.IsDevelopment())
+                {
+                    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureDeleted();
                     scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureCreated();
+                }
+                    
                 else
                     scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
 
