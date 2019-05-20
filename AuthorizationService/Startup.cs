@@ -106,25 +106,6 @@ namespace AuthorizationService
             });
         }
 
-<<<<<<< HEAD
-        private static void InitializeDatabase(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                if (env.IsDevelopment())
-                {
-                    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureDeleted();
-                    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureCreated();
-                }
-                    
-                else
-                    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
-
-            }
-        }
-
-=======
->>>>>>> 86618c1d5a9bebc36ca73d5a6981dcfc44dcf0f7
         private void SetupDatabase(IServiceCollection services, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
