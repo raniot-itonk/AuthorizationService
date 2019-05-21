@@ -13,6 +13,16 @@ spec:
       containers:
       - name: authorizationservice
         image: raniotitonk/authorizationservice
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          periodSeconds: 60
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          periodSeconds: 60  
         ports:
         - containerPort: 80
         - containerPort: 443
@@ -23,20 +33,10 @@ spec:
         - name: cert
           mountPath: "/https"
           readOnly: true
-        livenessProbe:
-          httpGet:
-            path: /health/live
-            port: 80
-          periodSeconds: 60
-        readinessProbe:
-          httpGet:
-            path: /health/ready
-            port: 80
-          periodSeconds: 60
       volumes:
       - name: cert
         secret:
-          secretName: authorizationservice-cert
+          secretName: authorizationservice-cert 
 ---
 apiVersion: v1
 kind: Service
