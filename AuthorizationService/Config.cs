@@ -27,7 +27,7 @@ namespace AuthorizationService
                     },
                     AllowedScopes = new List<string>
                     {
-                        "BankingService.UserActions",
+                        "client.UserActions",
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                     },
@@ -35,7 +35,7 @@ namespace AuthorizationService
                 },
                 new Client
                 {
-                    ClientId = "client.broker&taxer",
+                    ClientId = "client.Business",
                     ClientSecrets =
                     {
                         new Secret("secret".Sha256())
@@ -43,11 +43,13 @@ namespace AuthorizationService
 
                     AllowedGrantTypes = new List<string>
                     {
-                        GrantType.ClientCredentials,
+                        GrantType.ResourceOwnerPassword,
                     },
                     AllowedScopes = new List<string>
                     {
-                        "BankingService.broker&taxer",
+                        "client.BusinessActions",
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
                     },
                     AllowOfflineAccess = true
                 }
@@ -59,12 +61,12 @@ namespace AuthorizationService
         {
             return new List<ApiResource>
             {
-                new ApiResource("BankingService", "Banking")
+                new ApiResource("Client", "Client")
                 {
                     Scopes = new List<Scope>
                     {
-                        new Scope("BankingService.UserActions", "User authorization for banking service"),
-                        new Scope("BankingService.broker&taxer", "Broker & Taxer authorization for banking service")
+                        new Scope("client.UserActions", "User authorization"),
+                        new Scope("client.BusinessActions", "Business authorization")
                     },
                 },
 
